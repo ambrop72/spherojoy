@@ -1,22 +1,9 @@
-process main {
-    If (@true) {
-        var("/dev/input/by-id/usb-Logitech_Logitech_Extreme_3D-event-joystick") joy_dev;
-        value(["X": "0",    "Y": "0",    "RZ": "0",   "THROTTLE": "255"]) joy_axis_min;
-        value(["X": "1023", "Y": "1023", "RZ": "255", "THROTTLE": "0"  ]) joy_axis_max;
-        var("60") rz_degrees;
-        var("/dev/rfcomm0") sphero_dev;
-        var("5") max_sendq_len;
-        var("20") max_roll_interval;
-        var(@false) print_joy_events;
-        var("/run/current-system/sw/bin/stty") stty;
-        var("/run/current-system/sw/bin/python2.7") python;
-    } config;
-    
-    call(@_spheroncd, {^config});
-}
+include_guard "spheroncd"
 
 template _spheroncd {
     objref_arg(_arg0) config;
+    alias(@_arg1) stty;
+    alias(@_arg2) python;
     
     value([]) joy_positions;
     Do {
@@ -86,7 +73,7 @@ template _spheroncd_sphero {
     };
     first_time->set(@false);
     
-    runonce({global.config.stty, "-F", global.config.sphero_dev, "115200", "raw", "-echo"}, ["term_on_deinit":@true, "keep_stderr":@true]) stty_exec;
+    runonce({global.stty, "-F", global.config.sphero_dev, "115200", "raw", "-echo"}, ["term_on_deinit":@true, "keep_stderr":@true]) stty_exec;
     If (@num_different(stty_exec.exit_status, "0")) {
         log(@error, "Failed to stty the Sphero device");
         retry_connect->go();
@@ -262,7 +249,7 @@ template _spheroncd_calculator_task {
     };
     first_time->set(@false);
     
-    var({global.config.python, "-B", "calculator.py"}) cmd;
+    var({global.python, "-B", "calculator.py"}) cmd;
     
     sys.start_process(cmd, "rw", ["keep_stderr": @true]) proc;
     If (proc.is_error) {
