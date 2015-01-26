@@ -75,7 +75,7 @@ template _spheroncd_sphero {
     first_time->set(@false);
     
     runonce({global.stty, "-F", global.config.sphero_dev, "115200", "raw", "-echo"}, ["term_on_deinit":@true, "keep_stderr":@true]) stty_exec;
-    If (@num_different(stty_exec.exit_status, "0")) {
+    If (@val_different(stty_exec.exit_status, "0")) {
         log(@error, "Failed to stty the Sphero device");
         retry_connect->go();
     };

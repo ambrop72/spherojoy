@@ -1,0 +1,19 @@
+[
+    # The Bluetooth RFCOMM device used to communicate with the Sphero.
+    "sphero_rfcomm_dev": "/dev/rfcomm0",
+    
+    # The event device for the joystick.
+    # Note: -event device, not -js!
+    "joy_dev": "/dev/input/by-id/usb-Logitech_Logitech_Extreme_3D-event-joystick",
+    
+    # Minimum and axis values of the joystick.
+    # Note: the minimum may be the larger value, effectively reversing the axis.
+    "joy_axis_min": ["X": "0",    "Y": "0",    "RZ": "0",   "THROTTLE": "255"],
+    "joy_axis_max": ["X": "1023", "Y": "1023", "RZ": "255", "THROTTLE": "0"  ],
+    
+    # Stick rotation is added to the actual stick angle, to calculate the
+    # final direction requested from the Sphero. This parameter defines the
+    # magnitude of this correction, with a fully rotated stick understood as
+    # a correction of rz_degrees.
+    "rz_degrees": "60"
+]

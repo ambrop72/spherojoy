@@ -1,20 +1,32 @@
 include "spheroncd.ncdi"
 
 process main {
+    getargs() args;
+    value(args) args;
+    If (@num_different(args.length, "1")) {
+        println("Usage: program <config_file.ncdvalue>");
+        exit("1");
+    };
+    
+    args->get("0") config_file;
+    file_read(config_file) config_file_contents;
+    parse_value(config_file_contents) config_data;
+    value(config_data) config_data;
+    
     If (@true) {
-        var("/dev/input/by-id/usb-Logitech_Logitech_Extreme_3D-event-joystick") joy_dev;
-        value(["X": "0",    "Y": "0",    "RZ": "0",   "THROTTLE": "255"]) joy_axis_min;
-        value(["X": "1023", "Y": "1023", "RZ": "255", "THROTTLE": "0"  ]) joy_axis_max;
-        var("60") rz_degrees;
-        var("/dev/rfcomm0") sphero_dev;
+        config_data->get("joy_dev") joy_dev;
+        config_data->get("joy_axis_min") joy_axis_min;
+        config_data->get("joy_axis_max") joy_axis_max;
+        config_data->get("rz_degrees") rz_degrees;
+        config_data->get("sphero_rfcomm_dev") sphero_dev;
         var("5") max_sendq_len;
         var("20") max_roll_interval;
         var(@false) print_joy_events;
     } config;
     
-    var("/run/current-system/sw/bin/stty") stty;
-    var("/run/current-system/sw/bin/python2.7") python;
-    var(".") spherojoy_dir;
+    var("/STTY/") stty;
+    var("/PYTHON27/") python;
+    var("/SOURCE_DIR/") spherojoy_dir;
     
     call(@_spheroncd, {^config, stty, python, spherojoy_dir});
 }
