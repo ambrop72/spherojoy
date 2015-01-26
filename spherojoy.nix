@@ -1,4 +1,4 @@
-{ stdenv, writeScriptBin, coreutils, python27, bash, badvpn }:
+{ stdenv, writeScriptBin, coreutils, python27, bash, badvpn, systemd }:
 let
     spherojoySource = stdenv.lib.cleanSource ./.;
     
@@ -20,5 +20,7 @@ let
 in
 writeScriptBin "spherojoy" ''
     #!${bash}/bin/bash
+    # Need udevadm in path.
+    export PATH=${systemd}/bin:$PATH
     exec ${badvpn}/bin/badvpn-ncd --loglevel notice "${fixedSource}/main.ncd" "$@"
 ''

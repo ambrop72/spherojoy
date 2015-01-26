@@ -2,9 +2,10 @@
     # The Bluetooth RFCOMM device used to communicate with the Sphero.
     "sphero_rfcomm_dev": "/dev/rfcomm0",
     
-    # The event device for the joystick.
+    # The name of the event device for the joystick.
+    # This must be the name of the symlink which will appear in /dev/input/by-id/.
     # Note: -event device, not -js!
-    "joy_dev": "/dev/input/by-id/usb-Logitech_Logitech_Extreme_3D-event-joystick",
+    "joy_dev": "usb-Logitech_Logitech_Extreme_3D-event-joystick",
     
     # Minimum and axis values of the joystick.
     # Note: the minimum may be the larger value, effectively reversing the axis.

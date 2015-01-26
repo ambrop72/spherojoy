@@ -6,11 +6,44 @@ template _spheroncd {
     alias(@_arg2) python;
     alias(@_arg3) spherojoy_dir;
     
+    refhere() main;
+    
+    process_manager() run_mgr;
+    
+    refhere() main;
+    
+    process_manager() main_mgr;
+    main_mgr->start(@_spheroncd_input_watcher, {});
+}
+
+template _spheroncd_input_watcher {
+    objref(^_caller.main) main;
+    
+    sys.watch_directory("/dev/input/by-id") dir_watcher_event;
+    
+    If (@val_equal(dir_watcher_event.filename, main.config.joy_dev)) {
+        If (@val_equal(dir_watcher_event.event_type, @added)) {
+            main.run_mgr->start(@run, @_spheroncd_run, {dir_watcher_event.filepath});
+        } Elif (@val_equal(dir_watcher_event.event_type, @removed)) {
+            main.run_mgr->stop(@run);
+        };
+    };
+    
+    dir_watcher_event->nextevent();
+}
+
+template _spheroncd_run {
+    objref(^_caller.main) main;
+    objref(^main.config) config;
+    alias(@_arg0) joy_dev_path;
+    
+    log_fr(@notice, {"Running (joystick detected)"}, {"Stopping (joystick gone or exit)"});
+    
     value([]) joy_positions;
     Do {
         joy_positions->insert("BTN_TRIGGER", "0");
         joy_positions->insert("BTN_THUMB", "0");
-        Foreach (config.joy_axis_min As axis_name: range) {
+        Foreach (main.config.joy_axis_min As axis_name: range) {
             joy_positions->insert(@concat("ABS_", axis_name), @num_divide(range, "2"));
         };
     };
@@ -35,9 +68,7 @@ template _spheroncd {
 template _spheroncd_joystick_events {
     objref(^_caller.global) global;
     
-    log(@notice, "Listening on joystick ", global.config.joy_dev);
-    
-    sys.evdev(global.config.joy_dev) joy_event;
+    sys.evdev(global.joy_dev_path) joy_event;
     
     If (global.config.print_joy_events) {
         println(joy_event.code, " ", joy_event.value);
@@ -76,7 +107,7 @@ template _spheroncd_sphero {
     };
     first_time->set(@false);
     
-    runonce({global.stty, "-F", global.config.sphero_dev, "115200", "raw", "-echo"}, ["term_on_deinit":@true, "keep_stderr":@true]) stty_exec;
+    runonce({global.main.stty, "-F", global.config.sphero_dev, "115200", "raw", "-echo"}, ["term_on_deinit":@true, "keep_stderr":@true]) stty_exec;
     If (@val_different(stty_exec.exit_status, "0")) {
         log(@error, "Failed to stty the Sphero device");
         retry_connect->go();
@@ -262,7 +293,7 @@ template _spheroncd_calculator_task {
     };
     first_time->set(@false);
     
-    var({global.python, "-B", @concat(global.spherojoy_dir, "/calculator.py")}) cmd;
+    var({global.main.python, "-B", @concat(global.main.spherojoy_dir, "/calculator.py")}) cmd;
     
     sys.start_process(cmd, "rw", ["keep_stderr": @true]) proc;
     If (proc.is_error) {
