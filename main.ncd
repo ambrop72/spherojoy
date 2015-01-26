@@ -19,6 +19,8 @@ process main {
         config_data->get("joy_axis_max") joy_axis_max;
         config_data->get("rz_degrees") rz_degrees;
         config_data->get("sphero_rfcomm_dev") sphero_dev;
+        config_data->get("normal_color") normal_color;
+        config_data->get("trigger_color") trigger_color;
         var("5") max_sendq_len;
         var("20") max_roll_interval;
         var(@false) print_joy_events;

@@ -21,6 +21,8 @@ template _spheroncd {
     
     var("0") last_adjust;
     
+    var(@none) last_color;
+    
     compile_search(" ") search_space;
     
     refhere() global;
@@ -223,6 +225,16 @@ template _spheroncd_control_task {
     call(@_spheroncd_calc_operation, {^dev, calc_request}) calc_op;
     global.search_space->explode(calc_op.response) resp_fields;
     value(resp_fields) resp_fields;
+    
+    var(@if(@num_different(turbo, "0"), global.config.trigger_color, global.config.normal_color)) color;
+    If (@val_different(color, global.last_color)) {
+        global.last_color->set(color);
+        value(color) color;
+        color->get("0") red;
+        color->get("1") green;
+        color->get("2") blue;
+        call(@_spheroncd_set_led_output, {^dev, red, green, blue, "0"});
+    };
     
     resp_fields->get("0") calc_heading;
     resp_fields->get("1") calc_speed;

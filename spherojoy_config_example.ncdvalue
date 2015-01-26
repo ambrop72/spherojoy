@@ -15,5 +15,9 @@
     # final direction requested from the Sphero. This parameter defines the
     # magnitude of this correction, with a fully rotated stick understood as
     # a correction of rz_degrees.
-    "rz_degrees": "60"
+    "rz_degrees": "60",
+    
+    # LED colors - normal color and color while trigger is pressed.
+    "normal_color": {"0", "255", "255"},
+    "trigger_color": {"255", "255", "255"}
 ]
