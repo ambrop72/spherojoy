@@ -7,10 +7,17 @@
     # Note: -event device, not -js!
     "joy_dev": "usb-Logitech_Logitech_Extreme_3D-event-joystick",
     
-    # Minimum and axis values of the joystick.
+    # Whether to print all joystick events to standard output (true/false).
+    # This makes it easy to determine the axis ranges and button names.
+    "print_joy_events": "false",
+    
+    # Joystick axis position ranges and default values.
+    # Set the default values right to prevent unwanted movement
+    # at the beginning ,before the program knows all the axis positions.
     # Note: the minimum may be the larger value, effectively reversing the axis.
     "joy_axis_min": ["X": "0",    "Y": "0",    "RZ": "0",   "THROTTLE": "255"],
     "joy_axis_max": ["X": "1023", "Y": "1023", "RZ": "255", "THROTTLE": "0"  ],
+    "joy_axis_def": ["X": "512",  "Y": "512",  "RZ": "128", "THROTTLE": "0"  ],
     
     # Button definitions.
     "turbo_button": "BTN_TRIGGER",
