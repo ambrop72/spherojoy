@@ -228,6 +228,12 @@ template _spheroncd_control_task {
     global.config.joy_axis_max->get("Y") max_y;
     global.config.joy_axis_max->get("RZ") max_rz;
     global.config.joy_axis_max->get("THROTTLE") max_throttle;
+    global.config.min_color->get("0") minc_r;
+    global.config.min_color->get("1") minc_g;
+    global.config.min_color->get("2") minc_b;
+    global.config.max_color->get("0") maxc_r;
+    global.config.max_color->get("1") maxc_g;
+    global.config.max_color->get("2") maxc_b;
     
     var(global.last_adjust) old_adjust;
     global.last_adjust->set(adjust);
@@ -235,16 +241,26 @@ template _spheroncd_control_task {
     var(@concat(
         pos_x,        " ", min_x,        " ", max_x,        " ",
         pos_y,        " ", min_y,        " ", max_y,        " ",
-        pos_rz,       " ", min_rz,       " ", max_rz,       " ", global.config.rz_degrees, " ",
+        pos_rz,       " ", min_rz,       " ", max_rz,       " ",
         pos_throttle, " ", min_throttle, " ", max_throttle, " ",
-        turbo, " ", adjust, " ", global.config.dead_disk_radius, "\n"
+        minc_r,       " ", minc_g,       " ", minc_b,       " ",
+        maxc_r,       " ", maxc_g,       " ", maxc_b,       " ",
+        global.config.rz_degrees, " ", turbo, " ", adjust, " ",
+        global.config.dead_disk_radius, "\n"
     )) calc_request;
     
     call(@_spheroncd_calc_operation, {^dev, calc_request}) calc_op;
     global.search_space->explode(calc_op.response) resp_fields;
     value(resp_fields) resp_fields;
     
-    var(@if(@num_different(turbo, "0"), global.config.trigger_color, global.config.normal_color)) color;
+    resp_fields->get("0") calc_heading;
+    resp_fields->get("1") calc_speed;
+    resp_fields->get("2") color_r;
+    resp_fields->get("3") color_g;
+    resp_fields->get("4") color_b;
+    
+    var({color_r, color_g, color_b}) color;
+    
     If (@val_different(color, global.last_color)) {
         global.last_color->set(color);
         value(color) color;
@@ -253,9 +269,6 @@ template _spheroncd_control_task {
         color->get("2") blue;
         call(@_spheroncd_set_led_output, {^dev, red, green, blue, "0"});
     };
-    
-    resp_fields->get("0") calc_heading;
-    resp_fields->get("1") calc_speed;
     
     If (@and(@num_different(old_adjust, "0"), @num_equal(adjust, "0"))) {
         call(@_spheroncd_set_heading, {^dev, calc_heading});

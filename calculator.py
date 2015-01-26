@@ -12,7 +12,14 @@ def main():
         comps = sys.stdin.readline().rstrip('\n').split(' ')
         numbers = [float(x) for x in comps]
         
-        x_val, x_min, x_max, y_val, y_min, y_max, rz_val, rz_min, rz_max, rz_degrees, throttle_pos, throttle_min, throttle_max, turbo, adjust, dead_disk_radius = numbers
+        x_val, x_min, x_max, \
+        y_val, y_min, y_max, \
+        rz_val, rz_min, rz_max, \
+        throttle_pos, throttle_min, throttle_max, \
+        minc_r, minc_g, minc_b, \
+        maxc_r, maxc_g, maxc_b, \
+        rz_degrees, turbo, adjust, \
+        dead_disk_radius = numbers
         
         x_rel  = compute_rel_signed(x_val, x_min, x_max)
         y_rel  = compute_rel_signed(y_val, y_min, y_max)
@@ -27,7 +34,14 @@ def main():
         angle_fixed = (int(round(math.degrees(angle))) + 90) % 360
         speed_fixed = 0 if adjust else 255 if turbo else max(0, min(255, int(round(255.0 * length))))
         
-        sys.stdout.write('{} {}\n'.format(angle_fixed, speed_fixed))
+        color_frac = 1.0 if turbo else dead_corrected_length
+        
+        color = tuple(
+            max(0, min(255, int(round((1.0 - color_frac) * a + color_frac * b))))
+            for (a, b) in zip((minc_r, minc_g, minc_b), (maxc_r, maxc_g, maxc_b))
+        )
+        
+        sys.stdout.write('{} {} {} {} {}\n'.format(angle_fixed, speed_fixed, color[0], color[1], color[2]))
         sys.stdout.flush()
         
 main()

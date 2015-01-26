@@ -23,8 +23,8 @@ process main {
         config_data->get("rz_degrees") rz_degrees;
         config_data->get("dead_disk_radius") dead_disk_radius;
         config_data->get("sphero_rfcomm_dev") sphero_dev;
-        config_data->get("normal_color") normal_color;
-        config_data->get("trigger_color") trigger_color;
+        config_data->get("min_color") min_color;
+        config_data->get("max_color") max_color;
         config_data->get("print_joy_events") print_joy_events;
         var("5") max_sendq_len;
         var("50") control_delay;

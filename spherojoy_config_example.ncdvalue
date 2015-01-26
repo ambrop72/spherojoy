@@ -27,7 +27,7 @@
     # final direction requested from the Sphero. This parameter defines the
     # magnitude of this correction, with a fully rotated stick understood as
     # a correction of rz_degrees.
-    "rz_degrees": "60",
+    "rz_degrees": "45",
     
     # The following radius (relative) from the center of the XY space defines the
     # dead-area disk, where the desired speed is zero, rather than being
@@ -37,7 +37,10 @@
     "dead_disk_radius": "0.05",
     
     # LED colors (red, green, blue).
-    # The trigger_color is when the trigger is pressed.
-    "normal_color": {"0", "255", "255"},
-    "trigger_color": {"255", "255", "255"}
+    # The color is interpolated between the min_color and max_color based
+    # on the target speed. To disable this feature, just use the same color.
+    # The color depends on the stick position, without taking into account
+    # throttle scaling. Except that the max_color is used during turbo.
+    "min_color": {"150", "0", "0"},
+    "max_color": {"255", "255", "255"}
 ]
