@@ -43,6 +43,7 @@ template _spheroncd_run {
     Do {
         joy_positions->insert(config.turbo_button, "0");
         joy_positions->insert(config.calibrate_button, "0");
+        joy_positions->insert(config.blink_button, "0");
         Foreach (main.config.joy_axis_def As axis_name: default) {
             joy_positions->insert(@concat("ABS_", axis_name), default);
         };
@@ -220,6 +221,7 @@ template _spheroncd_control_task {
     global.joy_positions->get("ABS_THROTTLE") pos_throttle;
     global.joy_positions->get(global.config.turbo_button) turbo;
     global.joy_positions->get(global.config.calibrate_button) adjust;
+    global.joy_positions->get(global.config.blink_button) blink;
     global.config.joy_axis_min->get("X") min_x;
     global.config.joy_axis_min->get("Y") min_y;
     global.config.joy_axis_min->get("RZ") min_rz;
@@ -260,6 +262,9 @@ template _spheroncd_control_task {
     resp_fields->get("4") color_b;
     
     var({color_r, color_g, color_b}) color;
+    If (@val_different(blink, "0")) {
+        color->set(global.config.blink_color);
+    };
     
     If (@val_different(color, global.last_color)) {
         global.last_color->set(color);

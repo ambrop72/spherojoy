@@ -20,11 +20,13 @@ process main {
         config_data->get("joy_axis_def") joy_axis_def;
         config_data->get("turbo_button") turbo_button;
         config_data->get("calibrate_button") calibrate_button;
+        config_data->get("blink_button") blink_button;
         config_data->get("rz_degrees") rz_degrees;
         config_data->get("dead_disk_radius") dead_disk_radius;
         config_data->get("sphero_rfcomm_dev") sphero_dev;
         config_data->get("min_color") min_color;
         config_data->get("max_color") max_color;
+        config_data->get("blink_color") blink_color;
         config_data->get("print_joy_events") print_joy_events;
         var("5") max_sendq_len;
         var("50") control_delay;

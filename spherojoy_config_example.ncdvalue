@@ -22,6 +22,7 @@
     # Button definitions.
     "turbo_button": "BTN_TRIGGER",
     "calibrate_button": "BTN_THUMB",
+    "blink_button": "BTN_THUMB2",
     
     # Stick rotation is added to the actual stick angle, to calculate the
     # final direction requested from the Sphero. This parameter defines the
@@ -36,11 +37,14 @@
     # is not reduced.
     "dead_disk_radius": "0.05",
     
-    # LED colors (red, green, blue).
+    # LED color range (red, green, blue).
     # The color is interpolated between the min_color and max_color based
     # on the target speed. To disable this feature, just use the same color.
     # The color depends on the stick position, without taking into account
     # throttle scaling. Except that the max_color is used during turbo.
-    "min_color": {"150", "0", "0"},
-    "max_color": {"255", "255", "255"}
+    "min_color": {"0", "100", "0"},
+    "max_color": {"255", "255", "255"},
+    
+    # Color to switch to when the blink button is pressed.
+    "blink_color": {"0", "255", "255"}
 ]
