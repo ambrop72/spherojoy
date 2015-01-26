@@ -4,6 +4,7 @@ template _spheroncd {
     objref_arg(_arg0) config;
     alias(@_arg1) stty;
     alias(@_arg2) python;
+    alias(@_arg3) spherojoy_dir;
     
     value([]) joy_positions;
     Do {
@@ -249,7 +250,7 @@ template _spheroncd_calculator_task {
     };
     first_time->set(@false);
     
-    var({global.python, "-B", "calculator.py"}) cmd;
+    var({global.python, "-B", @concat(global.spherojoy_dir, "/calculator.py")}) cmd;
     
     sys.start_process(cmd, "rw", ["keep_stderr": @true]) proc;
     If (proc.is_error) {

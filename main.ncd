@@ -14,6 +14,7 @@ process main {
     
     var("/run/current-system/sw/bin/stty") stty;
     var("/run/current-system/sw/bin/python2.7") python;
+    var(".") spherojoy_dir;
     
-    call(@_spheroncd, {^config, stty, python});
+    call(@_spheroncd, {^config, stty, python, spherojoy_dir});
 }

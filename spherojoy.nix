@@ -19,8 +19,9 @@ let
             
             var("${coreutils}/bin/stty") stty;
             var("${python27}/bin/python") python;
+            var("${spherojoySource}") spherojoy_dir;
             
-            call(@_spheroncd, {^config, stty, python});
+            call(@_spheroncd, {^config, stty, python, spherojoy_dir});
         }
     '';
 
