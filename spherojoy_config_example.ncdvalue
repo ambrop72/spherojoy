@@ -12,6 +12,10 @@
     "joy_axis_min": ["X": "0",    "Y": "0",    "RZ": "0",   "THROTTLE": "255"],
     "joy_axis_max": ["X": "1023", "Y": "1023", "RZ": "255", "THROTTLE": "0"  ],
     
+    # Button definitions.
+    "turbo_button": "BTN_TRIGGER",
+    "calibrate_button": "BTN_THUMB",
+    
     # Stick rotation is added to the actual stick angle, to calculate the
     # final direction requested from the Sphero. This parameter defines the
     # magnitude of this correction, with a fully rotated stick understood as

@@ -41,8 +41,8 @@ template _spheroncd_run {
     
     value([]) joy_positions;
     Do {
-        joy_positions->insert("BTN_TRIGGER", "0");
-        joy_positions->insert("BTN_THUMB", "0");
+        joy_positions->insert(config.turbo_button, "0");
+        joy_positions->insert(config.calibrate_button, "0");
         Foreach (main.config.joy_axis_min As axis_name: range) {
             joy_positions->insert(@concat("ABS_", axis_name), @num_divide(range, "2"));
         };
@@ -231,8 +231,8 @@ template _spheroncd_control_task {
     global.joy_positions->get("ABS_Y") pos_y;
     global.joy_positions->get("ABS_RZ") pos_rz;
     global.joy_positions->get("ABS_THROTTLE") pos_throttle;
-    global.joy_positions->get("BTN_TRIGGER") turbo;
-    global.joy_positions->get("BTN_THUMB") adjust;
+    global.joy_positions->get(global.config.turbo_button) turbo;
+    global.joy_positions->get(global.config.calibrate_button) adjust;
     global.config.joy_axis_min->get("X") min_x;
     global.config.joy_axis_min->get("Y") min_y;
     global.config.joy_axis_min->get("RZ") min_rz;

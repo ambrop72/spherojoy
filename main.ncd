@@ -17,6 +17,8 @@ process main {
         config_data->get("joy_dev") joy_dev;
         config_data->get("joy_axis_min") joy_axis_min;
         config_data->get("joy_axis_max") joy_axis_max;
+        config_data->get("turbo_button") turbo_button;
+        config_data->get("calibrate_button") calibrate_button;
         config_data->get("rz_degrees") rz_degrees;
         config_data->get("dead_disk_radius") dead_disk_radius;
         config_data->get("sphero_rfcomm_dev") sphero_dev;
