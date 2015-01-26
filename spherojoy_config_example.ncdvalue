@@ -18,7 +18,15 @@
     # a correction of rz_degrees.
     "rz_degrees": "60",
     
-    # LED colors - normal color and color while trigger is pressed.
+    # The following radius (relative) from the center of the XY space defines the
+    # dead-area disk, where the desired speed is zero, rather than being
+    # proportional to the distance from the center. Outside this disk,
+    # the distance is offset and scaled, so that the range of possible speeds
+    # is not reduced.
+    "dead_disk_radius": "0.05",
+    
+    # LED colors (red, green, blue).
+    # The trigger_color is when the trigger is pressed.
     "normal_color": {"0", "255", "255"},
     "trigger_color": {"255", "255", "255"}
 ]

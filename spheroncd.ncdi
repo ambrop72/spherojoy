@@ -250,7 +250,7 @@ template _spheroncd_control_task {
         pos_y,        " ", min_y,        " ", max_y,        " ",
         pos_rz,       " ", min_rz,       " ", max_rz,       " ", global.config.rz_degrees, " ",
         pos_throttle, " ", min_throttle, " ", max_throttle, " ",
-        turbo, " ", adjust, "\n"
+        turbo, " ", adjust, " ", global.config.dead_disk_radius, "\n"
     )) calc_request;
     
     call(@_spheroncd_calc_operation, {^dev, calc_request}) calc_op;

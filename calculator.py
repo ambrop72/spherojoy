@@ -12,7 +12,7 @@ def main():
         comps = sys.stdin.readline().rstrip('\n').split(' ')
         numbers = [float(x) for x in comps]
         
-        x_val, x_min, x_max, y_val, y_min, y_max, rz_val, rz_min, rz_max, rz_degrees, throttle_pos, throttle_min, throttle_max, turbo, adjust = numbers
+        x_val, x_min, x_max, y_val, y_min, y_max, rz_val, rz_min, rz_max, rz_degrees, throttle_pos, throttle_min, throttle_max, turbo, adjust, dead_disk_radius = numbers
         
         x_rel  = compute_rel_signed(x_val, x_min, x_max)
         y_rel  = compute_rel_signed(y_val, y_min, y_max)
@@ -20,7 +20,9 @@ def main():
         throttle_rel = compute_rel_unsigned(throttle_pos, throttle_min, throttle_max)
         
         angle = math.atan2(y_rel, x_rel) + (rz_rel * math.radians(rz_degrees))
-        length = math.sqrt(x_rel**2 + y_rel**2) * throttle_rel
+        raw_length = math.sqrt(x_rel**2 + y_rel**2)
+        dead_corrected_length = max(0.0, raw_length - dead_disk_radius) / (1.0 - dead_disk_radius)
+        length = dead_corrected_length * throttle_rel
         
         angle_fixed = (int(round(math.degrees(angle))) + 90) % 360
         speed_fixed = 0 if adjust else 255 if turbo else max(0, min(255, int(round(255.0 * length))))
