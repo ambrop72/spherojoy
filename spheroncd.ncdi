@@ -66,6 +66,10 @@ template _spheroncd_joystick_events {
     objref(^global.config) config;
     objref(^global.joy_positions) joy_positions;
     
+    # It may take some time for udev to set device permissions.
+    # This is not critical since NCD keeps retrying the sys.evdev.
+    sleep("100");
+    
     sys.evdev(global.joy_dev_path) joy_event;
     
     If (config.print_joy_events) {
