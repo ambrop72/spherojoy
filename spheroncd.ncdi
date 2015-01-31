@@ -52,10 +52,7 @@ template _spheroncd_run {
     blocker(@true) joy_event_signal;
     
     var("0") last_adjust;
-    
     var(@none) last_color;
-    
-    compile_search(" ") search_space;
     
     refhere() global;
     
@@ -66,16 +63,18 @@ template _spheroncd_run {
 
 template _spheroncd_joystick_events {
     objref(^_caller.global) global;
+    objref(^global.config) config;
+    objref(^global.joy_positions) joy_positions;
     
     sys.evdev(global.joy_dev_path) joy_event;
     
-    If (global.config.print_joy_events) {
+    If (config.print_joy_events) {
         println(joy_event.code, " ", joy_event.value);
     };
     
-    global.joy_positions->try_get(joy_event.code) positions_entry;
+    joy_positions->try_get(joy_event.code) positions_entry;
     If (positions_entry.exists) {
-        global.joy_positions->replace(joy_event.code, joy_event.value);
+        joy_positions->replace(joy_event.code, joy_event.value);
         global.joy_event_signal->up();
         joy_event->nextevent();
     };
@@ -111,6 +110,8 @@ template _spheroncd_sphero {
     
     value({}) send_queue;
     blocker(@true) send_event;
+    
+    blocker(@true) ping_reset_signal;
     
     depend_scope() depsc;
     
@@ -201,41 +202,46 @@ template _spheroncd_enqueue_packet {
 template _spheroncd_ping_task {
     objref(^_caller.dev) dev;
     
-    backtrack_point() again;
-    call(@_spheroncd_enqueue_packet, {^dev, @true, @true, "0", "1", "0", ""});
+    dev.ping_reset_signal->use();
     sleep("2000");
-    again->go();
+    call(@_spheroncd_enqueue_packet, {^dev, @true, @true, "0", "1", "0", ""});
+    dev.ping_reset_signal->downup();
 }
 
 template _spheroncd_control_task {
     objref(^_caller.dev) dev;
     objref(^dev.global) global;
+    objref(^global.config) config;
+    objref(^global.joy_positions) joy_positions;
+    
+    compile_search(" ") search_space;
+    
+    config.joy_axis_min->get("X") min_x;
+    config.joy_axis_min->get("Y") min_y;
+    config.joy_axis_min->get("RZ") min_rz;
+    config.joy_axis_min->get("THROTTLE") min_throttle;
+    config.joy_axis_max->get("X") max_x;
+    config.joy_axis_max->get("Y") max_y;
+    config.joy_axis_max->get("RZ") max_rz;
+    config.joy_axis_max->get("THROTTLE") max_throttle;
+    config.min_color->get("0") minc_r;
+    config.min_color->get("1") minc_g;
+    config.min_color->get("2") minc_b;
+    config.max_color->get("0") maxc_r;
+    config.max_color->get("1") maxc_g;
+    config.max_color->get("2") maxc_b;
     
     backtrack_point() control_again;
     
     global.joy_event_signal->down();
     
-    global.joy_positions->get("ABS_X") pos_x;
-    global.joy_positions->get("ABS_Y") pos_y;
-    global.joy_positions->get("ABS_RZ") pos_rz;
-    global.joy_positions->get("ABS_THROTTLE") pos_throttle;
-    global.joy_positions->get(global.config.turbo_button) turbo;
-    global.joy_positions->get(global.config.calibrate_button) adjust;
-    global.joy_positions->get(global.config.blink_button) blink;
-    global.config.joy_axis_min->get("X") min_x;
-    global.config.joy_axis_min->get("Y") min_y;
-    global.config.joy_axis_min->get("RZ") min_rz;
-    global.config.joy_axis_min->get("THROTTLE") min_throttle;
-    global.config.joy_axis_max->get("X") max_x;
-    global.config.joy_axis_max->get("Y") max_y;
-    global.config.joy_axis_max->get("RZ") max_rz;
-    global.config.joy_axis_max->get("THROTTLE") max_throttle;
-    global.config.min_color->get("0") minc_r;
-    global.config.min_color->get("1") minc_g;
-    global.config.min_color->get("2") minc_b;
-    global.config.max_color->get("0") maxc_r;
-    global.config.max_color->get("1") maxc_g;
-    global.config.max_color->get("2") maxc_b;
+    joy_positions->get("ABS_X") pos_x;
+    joy_positions->get("ABS_Y") pos_y;
+    joy_positions->get("ABS_RZ") pos_rz;
+    joy_positions->get("ABS_THROTTLE") pos_throttle;
+    joy_positions->get(config.turbo_button) turbo;
+    joy_positions->get(config.calibrate_button) adjust;
+    joy_positions->get(config.blink_button) blink;
     
     var(global.last_adjust) old_adjust;
     global.last_adjust->set(adjust);
@@ -247,12 +253,12 @@ template _spheroncd_control_task {
         pos_throttle, " ", min_throttle, " ", max_throttle, " ",
         minc_r,       " ", minc_g,       " ", minc_b,       " ",
         maxc_r,       " ", maxc_g,       " ", maxc_b,       " ",
-        global.config.rz_degrees, " ", turbo, " ", adjust, " ",
-        global.config.dead_disk_radius, "\n"
+        config.rz_degrees, " ", turbo, " ", adjust, " ",
+        config.dead_disk_radius, "\n"
     )) calc_request;
     
     call(@_spheroncd_calc_operation, {^dev, calc_request}) calc_op;
-    global.search_space->explode(calc_op.response) resp_fields;
+    search_space->explode(calc_op.response) resp_fields;
     value(resp_fields) resp_fields;
     
     resp_fields->get("0") calc_heading;
@@ -263,7 +269,7 @@ template _spheroncd_control_task {
     
     var({color_r, color_g, color_b}) color;
     If (@val_different(blink, "0")) {
-        color->set(global.config.blink_color);
+        color->set(config.blink_color);
     };
     
     If (@val_different(color, global.last_color)) {
@@ -281,7 +287,9 @@ template _spheroncd_control_task {
     
     call(@_spheroncd_roll, {^dev, calc_speed, calc_heading, "1"});
     
-    sleep(global.config.control_delay);
+    dev.ping_reset_signal->downup();
+    
+    sleep(config.control_delay);
     
     global.joy_event_signal->use();
     control_again->go();
