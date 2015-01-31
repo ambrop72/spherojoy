@@ -6,6 +6,7 @@ It is designed to run on Linux and is mostly written in my [NCD programming lang
 
 Feature list:
 - Easy and precise calibration by holding a button and moving the stick around.
+  After calibration, movement is disabled until the stick is returned to the center.
 - Turbo mode using the trigger button.
 - The throttle axis scales and limits the speed. This makes it easier to drive at low speeds.
 - The Z-rotation axis is added to the XY angle to determine the desired direction.

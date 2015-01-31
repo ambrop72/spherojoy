@@ -53,6 +53,7 @@ template _spheroncd_run {
     
     var("0") last_adjust;
     var(@none) last_color;
+    var(@false) adjustment_release;
     
     refhere() global;
     
@@ -287,9 +288,15 @@ template _spheroncd_control_task {
     
     If (@and(@num_different(old_adjust, "0"), @num_equal(adjust, "0"))) {
         call(@_spheroncd_set_heading, {^dev, calc_heading});
+        
+        global.adjustment_release->set(@true);
     };
     
-    call(@_spheroncd_roll, {^dev, calc_speed, calc_heading, "1"});
+    If (@num_equal(calc_speed, "0")) {
+        global.adjustment_release->set(@false);
+    };
+    
+    call(@_spheroncd_roll, {^dev, @if(global.adjustment_release, "0", calc_speed), calc_heading, "1"});
     
     dev.ping_reset_signal->downup();
     
