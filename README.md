@@ -9,16 +9,16 @@ Feature list:
 - Turbo mode using the trigger button.
 - The throttle axis scales and limits the speed. This makes it easier to drive at low speeds.
 - The Z-rotation axis is added to the XY angle to determine the desired direction.
-- The LED color dynamically adjusted based on the stick position (interpolated between two values).
+- The LED color is dynamically adjusted based on the stick position (interpolated between two values).
 - A blink button temporarily changes the color.
 - Dead-zone is in effect around the zero position in the XY space (only speed is zeroed, not angle).
 - Only connects to the Sphero when the joystick is connected and disconnects when it is disconnected.
-  You can just leave the program running and connect the youstick whenever you want to play!
+  You can just leave the program running and connect the joystick whenever you want to play!
 
 # Building
 
 The only supported build/installation method is using the [Nix package manager](https://nixos.org/nix/).
-If you are not familiar with Nix, the easiest way to proceeed is to use the Nix installer (not distribution packages).
+If you are not familiar with Nix, the easiest way to proceed is to use the Nix installer (not distribution packages).
 
 Build the software by running the following command from the source directory:
 
@@ -47,7 +47,8 @@ Note that you need to run this as root.
 This will create `/dev/rfcomm0` (or whatever device number you specified).
 
 You will also need to give your user account permissions to use this device.
-Typically, the device will have group ownership by `dialout`, so you can add yourself to this group.
+Typically, the device will have group ownership by `dialout`,
+in which case you can add yourself to this group (`gpasswd -a your_user dialout`).
 But you will need to log out and back in for this to take effect.
 
 # Configuration
